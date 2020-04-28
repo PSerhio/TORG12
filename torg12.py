@@ -2,55 +2,56 @@ import xlrd
 import re
 
 
-class TableHead:
-    """Шапка таблицы"""
-    # код колонки: [имя колонки, относительное смещение строки, *(номер колонки Excel)]
-    def __init__(self):
-        self.head = {1: ['номерпопорядку', 0],
-                     2: ['наименование,характеристика,сорт,артикултовара', 1],
-                     3: ['код', 1],
-                     4: ['наименование', 1],
-                     5: ['кодпоОКЕИ', 1],
-                     6: ['видупаковки', 0],
-                     7: ['водномместе', 1],
-                     8: ['мест,штук', 1],
-                     9: ['массабрутто', 0],
-                     10: ['количество(массанетто)', 0],
-                     11: ['цена,руб.коп.', 0],
-                     12: ['суммабезучетаНДС,руб.коп.', 0],
-                     13: ['ставка,%', 1],
-                     14: ['сумма,руб.коп.', 1],
-                     15: ['суммасучетомНДС,руб.коп.', 0]
-                     }
+class Torg12:
 
+    class TableHead:
+        """Шапка таблицы"""
 
-class TableString:
-    """Строка таблицы"""
-    def __init__(self, number, tovar, code, unit, unit_code, kind_of_pack, quantity_per_packplace,
-                 packplace_quantity, weight, quantity, price, summa_bez_nds, stavka_nds, summa_nds,
-                 summa_incl_nds):
-        self.number = number
-        self.tovar = tovar
-        self.code = code
-        self.unit = unit
-        self.unit_code = unit_code
-        self.kind_of_pack = kind_of_pack
-        self.quantity_per_packplace = quantity_per_packplace
-        self.packplace_quantity = packplace_quantity
-        self.weight = weight
-        self.quantity = quantity
-        self.price = price
-        self.summa_bez_nds = summa_bez_nds
-        self.stavka_nds = stavka_nds
-        self.summa_nds = summa_nds
-        self.summa_incl_nds = summa_incl_nds
+        # код колонки: [имя колонки, относительное смещение строки, *(номер колонки Excel)]
+        def __init__(self):
+            self.head = {1: ['номерпопорядку', 0],
+                         2: ['наименование,характеристика,сорт,артикултовара', 1],
+                         3: ['код', 1],
+                         4: ['наименование', 1],
+                         5: ['кодпоОКЕИ', 1],
+                         6: ['видупаковки', 0],
+                         7: ['водномместе', 1],
+                         8: ['мест,штук', 1],
+                         9: ['массабрутто', 0],
+                         10: ['количество(массанетто)', 0],
+                         11: ['цена,руб.коп.', 0],
+                         12: ['суммабезучетаНДС,руб.коп.', 0],
+                         13: ['ставка,%', 1],
+                         14: ['сумма,руб.коп.', 1],
+                         15: ['суммасучетомНДС,руб.коп.', 0]
+                         }
 
-    def __str__(self):
-        return str(self.number)+'|'+self.tovar+'|'+str(self.code)+'|'+str(self.quantity)+'|'+str(self.price)+'|'\
-               + str(self.summa_bez_nds)
+    class TableString:
+        """Строка таблицы"""
 
+        def __init__(self, number, tovar, code, unit, unit_code, kind_of_pack, quantity_per_packplace,
+                     packplace_quantity, weight, quantity, price, summa_bez_nds, stavka_nds, summa_nds,
+                     summa_incl_nds):
+            self.number = number
+            self.tovar = tovar
+            self.code = code
+            self.unit = unit
+            self.unit_code = unit_code
+            self.kind_of_pack = kind_of_pack
+            self.quantity_per_packplace = quantity_per_packplace
+            self.packplace_quantity = packplace_quantity
+            self.weight = weight
+            self.quantity = quantity
+            self.price = price
+            self.summa_bez_nds = summa_bez_nds
+            self.stavka_nds = stavka_nds
+            self.summa_nds = summa_nds
+            self.summa_incl_nds = summa_incl_nds
 
-class Torg12(TableHead, TableString):
+        def __str__(self):
+            return str(self.number) + '|' + self.tovar + '|' + str(self.code) + '|' + str(self.quantity) + '|' + str(
+                self.price) + '|' \
+                   + str(self.summa_bez_nds)
 
     def __init__(self, file_name):
         self.name = file_name
@@ -64,7 +65,7 @@ class Torg12(TableHead, TableString):
         self.__nrows = self.sheet.nrows
         self.__ncols = self.sheet.ncols
         self.__pages = {}
-        self.__head_table = TableHead()
+        self.__head_table = self.TableHead()
         self.value_table = []
 
         if self.check_valid():
@@ -154,22 +155,22 @@ class Torg12(TableHead, TableString):
                     kod = self.sheet.cell_value(row, self.__head_table.head[3][2])
                     if type(kod) is float or type(kod) is int:
                         kod = str(int(kod))
-                    table_string = TableString(number,
-                                               self.sheet.cell_value(row, self.__head_table.head[2][2]),
-                                               kod,
-                                               self.sheet.cell_value(row, self.__head_table.head[4][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[5][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[6][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[7][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[8][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[9][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[10][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[11][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[12][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[13][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[14][2]),
-                                               self.sheet.cell_value(row, self.__head_table.head[15][2])
-                                               )
+                    table_string = self.TableString(number,
+                                                    self.sheet.cell_value(row, self.__head_table.head[2][2]),
+                                                    kod,
+                                                    self.sheet.cell_value(row, self.__head_table.head[4][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[5][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[6][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[7][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[8][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[9][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[10][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[11][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[12][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[13][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[14][2]),
+                                                    self.sheet.cell_value(row, self.__head_table.head[15][2])
+                                                    )
                     self.value_table.append(table_string)
                 if not self.sheet.cell_value(row, self.__head_table.head[1][2]):
                     break
